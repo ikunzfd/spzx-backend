@@ -40,7 +40,7 @@ public class LoginAuthInterceptor implements HandlerInterceptor {
         }
 
         // 如果token不为空，那么此时验证token的合法性
-        String sysUserInfoJson = redisTemplate.opsForValue().get("user:login:" + token);
+        String sysUserInfoJson = redisTemplate.opsForValue().get("user:login" + token);
         if(StrUtil.isEmpty(sysUserInfoJson)) {
             responseNoLoginInfo(response) ;
             return false ;
@@ -51,7 +51,7 @@ public class LoginAuthInterceptor implements HandlerInterceptor {
         AuthContextUtil.set(sysUser);
 
         // 重置Redis中的用户数据的有效时间
-        redisTemplate.expire("user:login:" + token , 30 , TimeUnit.MINUTES) ;
+        redisTemplate.expire("user:login" + token , 30 , TimeUnit.MINUTES) ;
 
         return true;
     }
