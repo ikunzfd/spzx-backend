@@ -2,10 +2,15 @@ package com.zfd.spzx.manager.service.impl;
 
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.zfd.spzx.common.exception.SpzxException;
+import com.zfd.spzx.manager.mapper.SysRoleUserMapper;
 import com.zfd.spzx.manager.mapper.SysUserMapper;
 import com.zfd.spzx.manager.service.SysUserService;
+import com.zfd.spzx.model.dto.system.AssginRoleDto;
 import com.zfd.spzx.model.dto.system.LoginDto;
+import com.zfd.spzx.model.dto.system.SysUserDto;
 import com.zfd.spzx.model.entity.system.SysUser;
 import com.zfd.spzx.model.vo.common.ResultCodeEnum;
 import com.zfd.spzx.model.vo.system.LoginVo;
@@ -14,6 +19,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -21,6 +27,8 @@ import java.util.concurrent.TimeUnit;
 public class SysUserServiceImpl implements SysUserService {
     @Autowired
     private SysUserMapper sysUserMapper;
+    @Autowired
+    private SysRoleUserMapper sysRoleUserMapper;
     @Autowired
     private RedisTemplate<String,String> redisTemplate;
 
@@ -71,5 +79,51 @@ public class SysUserServiceImpl implements SysUserService {
     @Override
     public void logout(String token) {
         redisTemplate.delete("user:login" + token);
+    }
+
+    @Override
+    public PageInfo<SysUser> findByPage(Integer pageNum, Integer pageSize, SysUserDto sysUserDto) {
+        PageHelper.startPage(pageNum,pageSize);
+        List<SysUser> list = sysUserMapper.findByPage(sysUserDto);
+        PageInfo<SysUser> pageInfo = new PageInfo<>(list);
+        return pageInfo;
+    }
+
+    @Override
+    public void saveSysUser(SysUser sysUser) {
+
+        String userName = sysUser.getUserName();
+        SysUser dbSysUser = sysUserMapper.selectSysUserByUserName(userName);
+        if (dbSysUser != null) {
+            throw new SpzxException(ResultCodeEnum.USER_NAME_IS_EXISTS);
+        }
+
+        String md5Password = DigestUtils.md5DigestAsHex(sysUser.getPassword().getBytes());
+        sysUser.setPassword(md5Password);
+
+        sysUser.setStatus(1);
+
+        sysUserMapper.save(sysUser);
+    }
+
+    @Override
+    public void updateSysUser(SysUser sysUser) {
+        sysUserMapper.update(sysUser);
+    }
+
+    @Override
+    public void deleteById(Long userId) {
+        sysUserMapper.delete(userId);
+    }
+
+    @Override
+    public void doAssign(AssginRoleDto assginRoleDto) {
+
+        sysRoleUserMapper.deleteByUserId(assginRoleDto.getUserId());
+
+        List<Long> roleIdList = assginRoleDto.getRoleIdList();
+        for (Long roleId : roleIdList) {
+            sysRoleUserMapper.doAssign(assginRoleDto.getUserId(),roleId);
+        }
     }
 }

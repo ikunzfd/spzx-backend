@@ -57,4 +57,10 @@
                   )
     </insert>
 
+    <select id="findAll" resultMap="sysRoleMap">
+        select <include refid="columns"/>
+        from sys_role
+        where is_deleted = 0
+    </select>
+
 </mapper>

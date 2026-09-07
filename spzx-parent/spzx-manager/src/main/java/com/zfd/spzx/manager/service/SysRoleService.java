@@ -4,6 +4,8 @@ import com.github.pagehelper.PageInfo;
 import com.zfd.spzx.model.dto.system.SysRoleDto;
 import com.zfd.spzx.model.entity.system.SysRole;
 
+import java.util.Map;
+
 public interface SysRoleService {
     PageInfo<SysRole> findByPage(SysRoleDto sysRoleDto, Integer pageNum, Integer pageSize);
 
@@ -12,4 +14,7 @@ public interface SysRoleService {
     void updateSysRole(SysRole sysRole);
 
     void deleteById(Long roleId);
+
+    Map<String, Object> findAll(Long userId);
+
 }

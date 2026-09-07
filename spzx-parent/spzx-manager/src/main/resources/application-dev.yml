@@ -27,3 +27,9 @@ spzx:
       - /doc.html
       - /webjars/**
       - /v3/**
+
+  minio:
+    endpointUrl: http://192.168.10.102:9001
+    accessKey: admin
+    secreKey: admin123456
+    bucketName: spzx-bucket

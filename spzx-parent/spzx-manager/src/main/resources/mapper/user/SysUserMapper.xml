@@ -7,7 +7,77 @@
     </sql>
 
     <select id="selectSysUserByUserName" resultType="com.zfd.spzx.model.entity.system.SysUser">
-        select <include refid="columns"/> from sys_user where username = #{userName}
+        select <include refid="columns"/> from sys_user where username = #{userName} and is_deleted = 0
     </select>
+
+    <select id="findByPage" resultType="com.zfd.spzx.model.entity.system.SysUser">
+        select <include refid="columns"/>
+        from sys_user
+        <where>
+            <if test="keyword != null and keyword != ''">
+                and username like concat('%',#{keyword},'%')
+            </if>
+            <if test="createTimeBegin != null and createTimeBegin != ''">
+                and create_time >= #{createTimeBegin}
+            </if>
+            <if test="createTimeEnd != null and createTimeEnd != ''">
+                and create_time &lt;= #{createTimeEnd}
+            </if>
+            and is_deleted = 0
+        </where>
+        order by id desc
+    </select>
+
+    <update id="save">
+        insert into sys_user (
+                              id,
+                              username,
+                              password,
+                              name,
+                              phone,
+                              avatar,
+                              description,
+                              status
+        ) values (#{id},
+                  #{userName},
+                  #{password},
+                  #{name},
+                  #{phone},
+                  #{avatar},
+                  #{description},
+                  #{status})
+    </update>
+
+    <update id="update">
+        update sys_user set
+        <if test="userName != null and userName != ''">
+            username = #{userName},
+        </if>
+        <if test="password != null and password != ''">
+            password = #{password},
+        </if>
+        <if test="name != null and name != ''">
+            name = #{name},
+        </if>
+        <if test="phone != null and phone != ''">
+            phone = #{phone},
+        </if>
+        <if test="description != null and description != ''">
+            description = #{description},
+        </if>
+        <if test="status != null and status != ''">
+            status = #{status},
+        </if>
+        <if test="avatar != null and avatar != ''">
+            avatar = #{avatar},
+        </if>
+        update_time =  now()
+        where
+        id = #{id}
+    </update>
+
+    <update id="delete">
+        update sys_user set is_deleted = 1 where id = #{userId}
+    </update>
 
 </mapper>
