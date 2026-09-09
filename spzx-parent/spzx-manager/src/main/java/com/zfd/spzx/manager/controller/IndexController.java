@@ -1,19 +1,21 @@
 package com.zfd.spzx.manager.controller;
 
-
+import com.zfd.spzx.manager.service.SysMenuService;
 import com.zfd.spzx.manager.service.SysUserService;
 import com.zfd.spzx.manager.service.ValidateCodeService;
 import com.zfd.spzx.model.dto.system.LoginDto;
-import com.zfd.spzx.model.entity.system.SysUser;
 import com.zfd.spzx.model.vo.common.Result;
 import com.zfd.spzx.model.vo.common.ResultCodeEnum;
 import com.zfd.spzx.model.vo.system.LoginVo;
+import com.zfd.spzx.model.vo.system.SysMenuVo;
 import com.zfd.spzx.model.vo.system.ValidateCodeVo;
 import com.zfd.spzx.utils.AuthContextUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Tag(name = "用户接口")
 @RestController
@@ -25,6 +27,9 @@ public class IndexController {
 
     @Autowired
     private ValidateCodeService validateCodeService;
+
+    @Autowired
+    private SysMenuService sysMenuService;
 
     //用户退出
     @GetMapping(value = "/logout")
@@ -60,4 +65,11 @@ public class IndexController {
         LoginVo loginVo = sysUserService.login(loginDto);
         return Result.build(loginVo, ResultCodeEnum.SUCCESS);
     }
+
+    @GetMapping("/menus")
+    public Result menus(){
+        List<SysMenuVo> list = sysMenuService.findMenusByUserId();
+        return Result.build(list, ResultCodeEnum.SUCCESS);
+    }
+
 }
