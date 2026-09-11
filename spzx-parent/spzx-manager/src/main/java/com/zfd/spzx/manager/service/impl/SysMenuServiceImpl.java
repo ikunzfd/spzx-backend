@@ -75,11 +75,9 @@ public class SysMenuServiceImpl implements SysMenuService {
         SysUser sysUser = AuthContextUtil.get();
         Long userId = sysUser.getId();
 
-        List<SysMenu> sysMenuList = sysMenuMapper.findMenusByUserId(userId);
+        List<SysMenu> sysMenuList = MenuHelper.buildTree(sysMenuMapper.findMenusByUserId(userId));
 
-        List<SysMenu> sysMenus = MenuHelper.buildTree(sysMenuList);
-
-        List<SysMenuVo> sysMenuVos = this.buildMenus(sysMenus);
+        List<SysMenuVo> sysMenuVos = this.buildMenus(sysMenuList);
 
         return sysMenuVos;
     }
