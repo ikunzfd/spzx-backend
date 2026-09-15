@@ -1,6 +1,8 @@
 package com.zfd.spzx.manager.controller;
 
 import com.github.pagehelper.PageInfo;
+import com.zfd.spzx.common.log.annotation.Log;
+import com.zfd.spzx.common.log.enums.OperatorType;
 import com.zfd.spzx.manager.service.BrandService;
 import com.zfd.spzx.model.entity.product.Brand;
 import com.zfd.spzx.model.vo.common.Result;
@@ -17,6 +19,7 @@ public class BrandController {
     @Autowired
     private BrandService brandService;
 
+    @Log(title = "品牌管理：列表",businessType = 0,operatorType = OperatorType.OTHER)
     @GetMapping("/{page}/{limit}")
     public Result findByPage(@PathVariable Integer page, @PathVariable Integer limit) {
         PageInfo<Brand> list = brandService.findByPage(page, limit);

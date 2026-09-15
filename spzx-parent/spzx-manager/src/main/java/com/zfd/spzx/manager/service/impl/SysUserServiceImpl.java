@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.zfd.spzx.common.exception.SpzxException;
+import com.zfd.spzx.common.log.annotation.Log;
 import com.zfd.spzx.manager.mapper.SysRoleUserMapper;
 import com.zfd.spzx.manager.mapper.SysUserMapper;
 import com.zfd.spzx.manager.service.SysUserService;
@@ -17,6 +18,7 @@ import com.zfd.spzx.model.vo.system.LoginVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
 
 import java.util.List;
@@ -116,6 +118,8 @@ public class SysUserServiceImpl implements SysUserService {
         sysUserMapper.delete(userId);
     }
 
+    @Log(title = "用户分配角色",businessType = 0)
+    @Transactional
     @Override
     public void doAssign(AssginRoleDto assginRoleDto) {
 

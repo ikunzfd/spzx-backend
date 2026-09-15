@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zfd.spzx.manager.mapper.OrderInfoMapper">
+
+    <select id="selectStatisticsByDate" resultType="com.zfd.spzx.model.entity.order.OrderStatistics">
+        select  DATE_FORMAT(o.create_time,'%Y-%m-%d') as orderDate,
+                sum(o.total_amount) as totalAmount,
+                count(o.id) as totalNum
+        from order_info o
+        where DATE_FORMAT(o.create_time,'%Y-%m-%d') = #{createDate}
+        group by DATE_FORMAT(o.create_time,'%Y-%m-%d')
+    </select>
+
+</mapper>
